@@ -65,10 +65,17 @@ statusBarCmd = "conky -c /home/mdomke/.xmonad/conkyrc | " ++
     "' -fg '" ++
     colorForeground ++
     "' -fn '" ++ statusBarFont ++ "'"
+
+spotifyBarCmd = "dzspotify | dzen2 -x 1000 -h 24 -w 420 -ta c -fg '" ++
+    colorCyan  ++
+    "' -bg '" ++
+    colorBackground  ++
+    "' -fn '" ++ statusBarFont ++ "'"
               
 main = do
-    dzenLeftBar  <- spawnPipe xmonadBarCmd
-    dzenRightBar <- spawnPipe statusBarCmd
+    dzenLeftBar   <- spawnPipe xmonadBarCmd
+    dzenRightBar  <- spawnPipe statusBarCmd
+    dzenCenterBar <- spawnPipe spotifyBarCmd
     xmonad $ withUrgencyHookC 
                 dzenUrgencyHook { args = ["-bg", colorRed, "fg", colorBackground, "-xs", "1", "-y", "25"] } 
                 urgencyConfig { remindWhen = Every 15 } 
@@ -135,7 +142,7 @@ logHandler h = dynamicLogWithPP $ defaultPP {
 layoutHook'   = avoidStruts $ onWorkspaces ["4:chat"] imLayout $ defaultLayout
 tiledLayout   = ResizableTall 1 (2/100) (60/100) []
 defaultLayout = avoidStruts $ tiledLayout ||| Mirror tiledLayout ||| Full ||| simpleFloat
-imLayout      = reflectHoriz $ withIM (1%5) (Title "Contact List") Grid 
+imLayout      = reflectHoriz $ withIM (1%5) (Or (Title "Buddy List") (Title "Contact List")) Grid 
 
 
 applicationMenu :: XPConfig
