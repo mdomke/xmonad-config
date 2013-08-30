@@ -30,23 +30,23 @@ import qualified XMonad.StackSet as W
 import qualified Data.Map as M
 
 
-colorForeground     = "#eee8d5"
-colorBackground     = "#1b1d1e"
-colorCyan           = "#2aa198"
-colorYellow         = "#b58900"
-colorOrange         = "#cb4b16"
-colorRed            = "#dc322f"
-colorDarkGray       = "#586e75"
-colorPink           = "#d33682"
-colorGreen          = "#859900"
-colorBlue           = "#268bd2"
-colorViolet         = "#6c71c4"
-colorWhite          = "#ccccc6"
-colorNormalBorder   = "#073642"
-colorFocusedBorder  = colorYellow
+colorForeground    = "#eee8d5"
+colorBackground    = "#1b1d1e"
+colorCyan          = "#2aa198"
+colorYellow        = "#b58900"
+colorOrange        = "#cb4b16"
+colorRed           = "#dc322f"
+colorDarkGray      = "#586e75"
+colorPink          = "#d33682"
+colorGreen         = "#859900"
+colorBlue          = "#268bd2"
+colorViolet        = "#6c71c4"
+colorWhite         = "#ccccc6"
+colorNormalBorder  = "#073642"
+colorFocusedBorder = colorYellow
 
-statusBarFont       = "Inconsolata:bold:size=10"
-terminalProgram     = "gnome-terminal"
+statusBarFont      = "Inconsolata:bold:size=10"
+terminalProgram    = "gnome-terminal"
 
 modMask' :: KeyMask
 modMask' = mod4Mask
@@ -55,10 +55,10 @@ spaces              = ["1:main","2:web","3:vim","4:chat","5:music","6:misc"]
 
 xmonadBarCmd = "dzen2 -x '0' -y '0' -h '24' -w '960' -ta 'l' -fg '" ++
     colorForeground ++
-    "' -bg '" ++ 
+    "' -bg '" ++
     colorBackground ++
     "' -fn '" ++ statusBarFont ++ "'"
-              
+
 statusBarCmd = "conky -c /home/mdomke/.xmonad/conkyrc | " ++
     "dzen2 -y '0' -x '960' -w '960' -h '24' -ta 'r' -bg '" ++
     colorBackground ++
@@ -71,15 +71,15 @@ spotifyBarCmd = "dzspotify | dzen2 -x 1000 -h 24 -w 420 -ta c -fg '" ++
     "' -bg '" ++
     colorBackground  ++
     "' -fn '" ++ statusBarFont ++ "'"
-              
+
 main = do
     dzenLeftBar   <- spawnPipe xmonadBarCmd
     dzenRightBar  <- spawnPipe statusBarCmd
     dzenCenterBar <- spawnPipe spotifyBarCmd
-    xmonad $ withUrgencyHookC 
-                dzenUrgencyHook { args = ["-bg", colorRed, "fg", colorBackground, "-xs", "1", "-y", "25"] } 
-                urgencyConfig { remindWhen = Every 15 } 
-           $ defaultConfig { 
+    xmonad $ withUrgencyHookC
+                dzenUrgencyHook { args = ["-bg", colorRed, "fg", colorBackground, "-xs", "1", "-y", "25"] }
+                urgencyConfig { remindWhen = Every 15 }
+           $ defaultConfig {
                  terminal            = terminalProgram
                , workspaces          = spaces
                , keys                = keys'
@@ -87,7 +87,7 @@ main = do
                , startupHook         = setWMName "LG3D"
                , layoutHook          = layoutHook'
                , manageHook          = manageHook'
-               , logHook             = logHandler dzenLeftBar 
+               , logHook             = logHandler dzenLeftBar
                , normalBorderColor   = colorNormalBorder
                , focusedBorderColor  = colorFocusedBorder
                , borderWidth         = 2
@@ -103,7 +103,7 @@ manageHook' = (composeAll . concat $
     , [className =? c --> doShift  "4:chat"  | c <- myChat   ] -- move chat to chat
     , [className =? c --> doShift  "5:music" | c <- myMusic  ] -- move music to music
     , [className =? c --> doCenterFloat      | c <- myFloats ] -- float my floats
-    ]) 
+    ])
     where
         role      = stringProperty "WM_WINDOW_ROLE"
         name      = stringProperty "WM_NAME"
@@ -115,7 +115,7 @@ manageHook' = (composeAll . concat $
         myVim	  = ["Gvim"]
         myIgnores = ["desktop","desktop_window","notify-osd","stalonetray","trayer"]
 
-        
+
 bitmapsDir = "/home/mdomke/.xmonad/bitmaps"
 logHandler :: Handle -> X ()
 logHandler h = dynamicLogWithPP $ defaultPP {
@@ -142,12 +142,12 @@ logHandler h = dynamicLogWithPP $ defaultPP {
 layoutHook'   = avoidStruts $ onWorkspaces ["4:chat"] imLayout $ defaultLayout
 tiledLayout   = ResizableTall 1 (2/100) (60/100) []
 defaultLayout = avoidStruts $ tiledLayout ||| Mirror tiledLayout ||| Full ||| simpleFloat
-imLayout      = reflectHoriz $ withIM (1%5) (Or (Title "Buddy List") (Title "Contact List")) Grid 
+imLayout      = reflectHoriz $ withIM (1%5) (Or (Title "Buddy List") (Title "Contact List")) Grid
 
 
 applicationMenu :: XPConfig
 applicationMenu =
-    defaultXPConfig { 
+    defaultXPConfig {
         font              = "xft: " ++ statusBarFont
       , bgColor           = colorBackground
       , fgColor           = colorBlue
@@ -181,8 +181,8 @@ keys' conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     , ((modMask .|. shiftMask, xK_k     ), windows W.swapUp)                   -- swap the focused window with the previous window
     , ((modMask,               xK_Return), windows W.swapMaster)
     , ((modMask,               xK_t     ), withFocused $ windows . W.sink)     -- Push window back into tiling
-    , ((modMask,               xK_h     ), sendMessage Shrink)                
-    , ((modMask,               xK_l     ), sendMessage Expand)               
+    , ((modMask,               xK_h     ), sendMessage Shrink)
+    , ((modMask,               xK_l     ), sendMessage Expand)
     , ((modMask,               xK_comma ), sendMessage (IncMasterN 1))
     , ((modMask,               xK_period), sendMessage (IncMasterN (-1)))
     ]
